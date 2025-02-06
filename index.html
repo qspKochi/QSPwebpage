@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      color: #fff;
+      font-size: large;
+    }
+    th, td {
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      
+    }
+    
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+  <div class="dashboard">
+    <div class="logo">
+      <img src="logo.png" alt="QSpider Logo" >
+    </div>
+    <div class="welcome">
+      <h1 class="wel1">Welcome to Qspiders & Jspiders</h1>
+      <h1 class="wel2">Kochi</h1>
+    </div>
+
+    <div class="stats">
+      <div class="stat1">
+        <h3>Total Students Placed</h3>
+        <div class="number" id="rowCountDiv" data-target=""></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="student-list scrollable">
+      <h1>Student Details</h1>
+      <table id="data-table">
+        <thead>
+          <tr>
+            <!-- Table headers will be populated dynamically -->
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Table rows will be populated dynamically -->
+        </tbody>
+      </table>
+      
+    
+      <script>
+        // Replace with your Google Sheets JSON feed URL
+        const sheetUrl = 'https://docs.google.com/spreadsheets/d/18Z5su4H8DHXSFRsiWvHHyUEZCf7OMNclYsFOVfa2Dic/gviz/tq?tqx=out:json';
+    
+        // Fetch data and display it in the table
+        async function fetchData() {
+          try {
+            const response = await fetch(sheetUrl);
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            const text = await response.text();
+            const json = JSON.parse(text.substring(47).slice(0, -2)); // Remove extra text from the response
+            const data = json.table.rows.map(row => {
+              const rowData = {};
+              row.c.forEach((cell, index) => {
+                rowData[json.table.cols[index].label] = cell?.v || '';
+              });
+              return rowData;
+            });
+            displayDataAsTable(data);
+            // Call the function when the page loads
+            countRows();
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+        }
+    
+        // Display data as a table
+        function displayDataAsTable(data) {
+          const table = document.getElementById('data-table');
+          const thead = table.querySelector('thead tr');
+          const tbody = table.querySelector('tbody');
+    
+          // Clear existing content
+          thead.innerHTML = '';
+          tbody.innerHTML = '';
+    
+          // Create table headers
+          if (data.length > 0) {
+            const headers = Object.keys(data[0]);
+            headers.forEach(header => {
+              const th = document.createElement('th');
+              th.textContent = header;
+              thead.appendChild(th);
+            });
+    
+            // Create table rows
+            data.forEach(row => {
+              const tr = document.createElement('tr');
+              headers.forEach(header => {
+                const td = document.createElement('td');
+                if (header === 'ImageURL') {
+                  // If the column is for images, create an <img> element
+                  const img = document.createElement('img');
+                  img.src = row[header];
+                  img.alt = 'Image';
+                  td.appendChild(img);
+                } else {
+                  // Otherwise, display the text content
+                  td.textContent = row[header];
+                }
+                tr.appendChild(td);
+              });
+              tbody.appendChild(tr);
+            });
+          }
+        }
+    
+        // Fetch data initially and set an interval to auto-update
+        fetchData();
+        setInterval(fetchData, 5000); // Update every 5 seconds
+      </script>
+    </div>
+
+    <div class="photo-gallery scrollable">
+      <h1>OUR ACTIVITIES</h1>
+      <div class="gallery">
+        <div class="photo">
+          <h2>Classes</h2>
+          <img src="./ActivityPhotos/14.jpg" alt="Photo 2" id="act">
+          <img src="./ActivityPhotos/15.jpg" alt="Photo 2" id="act">
+          <img src="./ActivityPhotos/12.jpg" alt="Photo 2" id="act">
+          <img src="./ActivityPhotos/16.jpg" alt="Photo 2" id="act">
+        </div>
+       
+        <div class="photo">
+          <h2>Presentations</h2>
+          <img src="./ActivityPhotos/5.jpeg" alt="Photo 2" id="act">
+          <img src="./ActivityPhotos/4.jpeg" alt="Photo 2" id="act">
+        </div>
+        
+        <div class="photo">
+          <h2>Mock Interview</h2>
+          <img src="./ActivityPhotos/23.jpg" alt="Photo 3" id="act">
+          <img src="./ActivityPhotos/24.jpg" alt="photo 5" id="act">
+          <img src="./ActivityPhotos/21.jpg" alt="Photo 2" id="act">
+          <img src="./ActivityPhotos/13.jpg" alt="Photo 2" id="act">
+        </div>
+        
+        <!-- Add more photos to make the gallery scrollable -->
+        <div class="photo">
+          <h2>Tests</h2>
+          <img src="./ActivityPhotos/25.jpg" alt="Photo 2" id="act">
+          <img src="./ActivityPhotos/26.jpg" alt="Photo 2" id="act">
+          <img src="./ActivityPhotos/19.jpeg" alt="Photo 2" id="act">
+          <img src="./ActivityPhotos/9.jpeg" alt="Photo 2" id="act">
+        </div>
+        
+        <div class="photo">
+          <h2>Celebrations</h2>
+          <img src="./ActivityPhotos/27.jpg" alt="Photo 2" id="act">
+          <img src="./ActivityPhotos/28.jpg" alt="Photo 2" id="act">
+          <img src="./ActivityPhotos/29.jpg" alt="Photo 2" id="act">
+          <img src="./ActivityPhotos/IMG-20240912-WA0049.jpg" alt="Photo 2" id="act">
+          <img src="./ActivityPhotos/17.jpg" alt="Photo 2" id="act">
+          <img src="./ActivityPhotos/IMG-20240914-WA0007.jpg" alt="Photo 2" id="act">
+          <img src="./ActivityPhotos/IMG-20240913-WA0339.jpg" alt="Photo 2" id="act">
+          <img src="./ActivityPhotos/IMG-20241230-WA0025.jpg" alt="Photo 2" id="act">
+        </div>   
+      </div>
+    </div>
+  </div>
+
+  <marquee class="contact">
+    <i class="fa-solid fa-phone-volume"></i> 8105036645 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <i class="fa-solid fa-phone-volume"></i> 8105722456  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        
+    <i class="fa-brands fa-instagram"></i> qspiders_kochi
+  </marquee>
+
+  <script src="script.js"></script>
+  <script>
+    // Automatically run this function when the page loads
+    function countRows() {
+        // Get the table element by its ID
+        var table = document.getElementById("data-table");
+        
+        // Get the number of rows in the table's tbody (excluding the header)
+        var rowCount = table.getElementsByTagName("tbody")[0].getElementsByTagName("tr").length;
+        
+        // Set the row count as the data-target attribute of the div
+        var rowCountDiv = document.getElementById("rowCountDiv");
+        rowCountDiv.setAttribute("data-target", rowCount);
+        rowCountDiv.textContent = `${rowCount}`;
+        // Optional: Display the data-target value for verification
+        console.log("Data-target value:", rowCountDiv.getAttribute("data-target"));
+    }    
+</script>
+</body>
+</html>
