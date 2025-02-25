@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Dashboard</title>
+  <title>Qspiders Kochi</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/x-icon" href="images-removebg-preview.png">
   <style>
     table {
       width: 100%;
@@ -59,7 +60,18 @@
       <script>
         // Replace with your Google Sheets JSON feed URL
         const sheetUrl = 'https://docs.google.com/spreadsheets/d/18Z5su4H8DHXSFRsiWvHHyUEZCf7OMNclYsFOVfa2Dic/gviz/tq?tqx=out:json';
-    
+      
+        // Function to convert Google Drive shareable link to direct image URL
+        function convertGoogleDriveLink(link) {
+          if (!link) return '';
+          const match = link.match(/\/file\/d\/([^\/]+)\//);
+          if (match && match[1]) {
+            return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+          }
+          console.log(link)
+          return link; // Return the original link if it's not a Google Drive link
+        }
+      
         // Fetch data and display it in the table
         async function fetchData() {
           try {
@@ -83,17 +95,17 @@
             console.error('Error fetching data:', error);
           }
         }
-    
+      
         // Display data as a table
         function displayDataAsTable(data) {
           const table = document.getElementById('data-table');
           const thead = table.querySelector('thead tr');
           const tbody = table.querySelector('tbody');
-    
+      
           // Clear existing content
           thead.innerHTML = '';
           tbody.innerHTML = '';
-    
+      
           // Create table headers
           if (data.length > 0) {
             const headers = Object.keys(data[0]);
@@ -102,17 +114,19 @@
               th.textContent = header;
               thead.appendChild(th);
             });
-    
+      
             // Create table rows
             data.forEach(row => {
               const tr = document.createElement('tr');
               headers.forEach(header => {
                 const td = document.createElement('td');
-                if (header === 'ImageURL') {
+                if (header === 'Image' && row[header]) {
                   // If the column is for images, create an <img> element
                   const img = document.createElement('img');
-                  img.src = row[header];
+                  const imageUrl = convertGoogleDriveLink(row[header]); // Convert Google Drive link
+                  img.src = imageUrl;
                   img.alt = 'Image';
+                  img.style.width = '100px'; // Adjust the size as needed
                   td.appendChild(img);
                 } else {
                   // Otherwise, display the text content
@@ -124,7 +138,7 @@
             });
           }
         }
-    
+      
         // Fetch data initially and set an interval to auto-update
         fetchData();
         setInterval(fetchData, 5000); // Update every 5 seconds
@@ -151,7 +165,7 @@
         <div class="photo">
           <h2>Mock Interview</h2>
           <img src="./ActivityPhotos/23.jpg" alt="Photo 3" id="act">
-          <img src="./ActivityPhotos/24.jpg" alt="photo 5" id="act">
+          <img src="./ActivityPhotos/IMG-20250207-WA0000__1_-removebg-preview.png" alt="photo 5" id="act">
           <img src="./ActivityPhotos/21.jpg" alt="Photo 2" id="act">
           <img src="./ActivityPhotos/13.jpg" alt="Photo 2" id="act">
         </div>
